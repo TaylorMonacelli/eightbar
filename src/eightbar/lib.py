@@ -294,13 +294,15 @@ def handle_rpm_fnames(
     version_parser = versions.VersionParser(versions.RegexStrategy())
 
     matcher = "streambox_www_for_avenir"
-    comp = component.Productcomponent("WebUI", matcher)
+    name = matcher
+    comp = component.Productcomponent(name, matcher)
     comp.version_parser = version_parser
     comp.product = product
     comp_candidates.append(comp)
 
     matcher = "streambox_webui_for_rackmount"
-    comp = component.Productcomponent("WebUI", matcher)
+    name = matcher
+    comp = component.Productcomponent(name, matcher)
     comp.version_parser = version_parser
     comp.product = product
     comp_candidates.append(comp)
