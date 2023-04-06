@@ -14,7 +14,9 @@ import jinja2
 import pkg_resources
 import requests
 
-from . import component, versions
+from . import component
+from . import product as productmod
+from . import versions
 
 _logger = logging.getLogger(__name__)
 
@@ -36,13 +38,6 @@ env = jinja2.Environment(loader=loader, keep_trailing_newline=True)
 
 
 @dataclasses.dataclass
-class Product:
-    url: str
-    name: str
-    tag: str
-
-
-@dataclasses.dataclass
 class UrlMeta:
     url: str
 
@@ -57,33 +52,28 @@ component_abbreviations = {
 }
 
 
-file_substrs = [
-    "streambox_webui_for_rackmount",
-    "streambox_www_for_avenir",
-]
-
 products = [
-    Product(
+    productmod.Product(
         "https://streambox-cdi.s3-us-west-2.amazonaws.com/latest/linux/InstallSbxCDI.tgz",  # noqa: E501
         "Bridge",
         "released",
     ),
-    Product(
+    productmod.Product(
         "https://streambox-cdi.s3-us-west-2.amazonaws.com/next-latest/linux/InstallSbxCDI.tgz",  # noqa: E501
         "Bridge",
         "beta",
     ),
-    Product(
+    productmod.Product(
         "https://streambox-cdi.s3-us-west-2.amazonaws.com/flame/linux/InstallSbxCDI.tgz",  # noqa: E501
         "Flame",
         "released",
     ),
-    Product(
+    productmod.Product(
         "https://streambox-cdi.s3-us-west-2.amazonaws.com/next-flame/linux/InstallSbxCDI.tgz",  # noqa: E501
         "Flame",
         "beta",
     ),
-    Product(
+    productmod.Product(
         "https://streambox-spectra.s3-us-west-2.amazonaws.com/latest/linux/spectra.zip",  # noqa: E501
         "Spectra",
         "released",
@@ -300,15 +290,17 @@ def handle_rpm_fnames(
 
     comp_candidates = []
 
+    product = get_product_from_url(url)
+
     matcher = "streambox_www_for_avenir"
     comp = component.Productcomponent("WebUI", matcher)
+    comp.product = product
     comp_candidates.append(comp)
 
     matcher = "streambox_webui_for_rackmount"
     comp = component.Productcomponent("WebUI", matcher)
+    comp.product = product
     comp_candidates.append(comp)
-
-    # product = get_product_from_url(url)
 
     found_components = []
 
