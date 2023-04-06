@@ -9,10 +9,8 @@ from . import versions
 _logger = logging.getLogger(__name__)
 
 
-def get_version_from_string(_str: str) -> str:
-    # version_parser = versions.VersionParser(versions.PackageStrategy())
-    version_parser = versions.VersionParser(versions.RegexStrategy())
-    version = version_parser.parse(_str)
+def get_version_from_string(_str: str, parser) -> str:
+    version = parser.parse(_str)
     _logger.debug(f"{version=}")
     x1 = list_tuples_to_str(version)
     x1 = x1.lstrip("-")
@@ -35,10 +33,11 @@ class Productcomponent:
     version: str = dataclasses.field(init=False)
     path: pathlib.Path = dataclasses.field(init=False)
     product: productmod.Product = dataclasses.field(init=False)
+    version_parser: versions.VersionParser = dataclasses.field(init=False)
 
     def version_from_str(self, _str) -> None:
         tmp = remove_strings_that_obfuscate_fetching_version(_str)
-        version = get_version_from_string(tmp)
+        version = get_version_from_string(tmp, parser=self.version_parser)
         self.version = version
 
 
